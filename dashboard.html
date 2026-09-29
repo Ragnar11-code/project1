@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltPath – Dashboard</title>
+<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="logo-icon">⚡</span>
+    <span class="logo-text">VoltPath</span>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-item active" onclick="showSection('map')"><span class="nav-icon">📍</span><span>Live Map</span></li>
+    <li class="nav-item" onclick="showSection('stations')"><span class="nav-icon">⚡</span><span>Find Stations</span></li>
+    <li class="nav-item" onclick="showSection('booking')"><span class="nav-icon">📅</span><span>Book Slot</span></li>
+    <li class="nav-item" onclick="showSection('battery')"><span class="nav-icon">🔋</span><span>Battery Estimator</span></li>
+    <li class="nav-item" onclick="showSection('cost')"><span class="nav-icon">💸</span><span>Cost Calculator</span></li>
+    <li class="nav-item" onclick="showSection('compare')"><span class="nav-icon">🔄</span><span>Compare Stations</span></li>
+    <li class="nav-item" onclick="showSection('route')"><span class="nav-icon">🛣️</span><span>Route Planner</span></li>
+    <li class="nav-item" onclick="showSection('history')"><span class="nav-icon">📊</span><span>Charging History</span></li>
+    <li class="nav-item" onclick="showSection('calendar')"><span class="nav-icon">🗓️</span><span>Booking Calendar</span></li>
+    <li class="nav-item" onclick="showSection('green')"><span class="nav-icon">♻️</span><span>Green Score</span></li>
+    <li class="nav-item" onclick="showSection('profile')"><span class="nav-icon">🚗</span><span>Vehicle Profiles</span></li>
+    <li class="nav-item" onclick="showSection('payment')"><span class="nav-icon">🛡️</span><span>Payments</span></li>
+    <li class="nav-item" onclick="showSection('support')"><span class="nav-icon">💬</span><span>Live Support</span></li>
+    <li class="nav-item" onclick="showSection('home')"><span class="nav-icon">🏠</span><span>Home Charger</span></li>
+    <li class="nav-item" onclick="showSection('referral')"><span class="nav-icon">🤝</span><span>Referral</span></li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="logout()">⬅ Logout</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main-content">
+  <header class="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-title" id="page-title">Live Map</div>
+    <div class="topbar-right">
+      <div class="notif-btn" onclick="showSection('alerts')">🔔 <span class="badge">3</span></div>
+      <div class="user-avatar" id="user-avatar">U</div>
+    </div>
+  </header>
+
+  <!-- SECTIONS -->
+
+  <!-- 1. MAP -->
+  <section class="section active" id="sec-map">
+    <div class="section-header">
+      <h2>📍 Live Map View</h2>
+      <button class="btn-sm" onclick="gpsLocate()">📡 Auto-locate Me</button>
+    </div>
+    <div id="map-container"></div>
+    <div class="map-legend">
+      <span class="dot green"></span>Available &nbsp;
+      <span class="dot yellow"></span>Busy &nbsp;
+      <span class="dot red"></span>Offline
+    </div>
+  </section>
+
+  <!-- 2. FIND STATIONS / SMART MATCH -->
+  <section class="section" id="sec-stations">
+    <div class="section-header"><h2>⚡ Find & Smart Match Stations</h2></div>
+    <div class="filter-bar">
+      <select id="filter-network" onchange="renderStations()">
+        <option value="">All Networks</option>
+        <option>TATA Power</option><option>Ather</option><option>Zeon</option>
+        <option>BPCL</option><option>EESL</option><option>Jio-BP</option>
+      </select>
+      <select id="filter-sort" onchange="renderStations()">
+        <option value="distance">Sort: Distance</option>
+        <option value="cost">Sort: Price</option>
+        <option value="speed">Sort: Speed</option>
+      </select>
+      <button class="btn-sm green" onclick="smartMatch()">🤖 Smart Match</button>
+    </div>
+    <div id="smart-match-result" style="display:none" class="info-banner"></div>
+    <div class="stations-grid" id="stations-grid"></div>
+  </section>
+
+  <!-- 3. BOOK SLOT -->
+  <section class="section" id="sec-booking">
+    <div class="section-header"><h2>📅 Book a Charging Slot</h2></div>
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Station</label>
+          <select id="book-station"></select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="book-date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Time Slot</label>
+          <select id="book-time">
+            <option>06:00 AM</option><option>07:00 AM</option><option>08:00 AM</option>
+            <option>09:00 AM</option><option>10:00 AM</option><option>11:00 AM</option>
+            <option>12:00 PM</option><option>02:00 PM</option><option>04:00 PM</option>
+            <option>06:00 PM</option><option>08:00 PM</option><option>10:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Connector Type</label>
+          <select id="book-connector">
+            <option>CCS2</option><option>CHAdeMO</option><option>Type 2 AC</option><option>Bharat DC-001</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="bookSlot()">Confirm Booking</button>
+    </div>
+    <div id="booking-confirm" class="success-banner" style="display:none"></div>
+    <h3 style="margin-top:28px;margin-bottom:12px;font-size:16px;">⏱️ Wait Time Estimator</h3>
+    <div class="wait-grid" id="wait-grid"></div>
+  </section>
+
+  <!-- 4. BATTERY ESTIMATOR -->
+  <section class="section" id="sec-battery">
+    <div class="section-header"><h2>🔋 Battery Estimator</h2></div>
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>EV Model</label>
+          <select id="batt-model" onchange="updateBattery()">
+            <option value="37">Tata Nexon EV (37 kWh)</option>
+            <option value="50.3">MG ZS EV (50.3 kWh)</option>
+            <option value="39.2">Hyundai Kona (39.2 kWh)</option>
+            <option value="2.9">Ather 450X (2.9 kWh)</option>
+            <option value="3.97">Ola S1 Pro (3.97 kWh)</option>
+            <option value="24">Tata Tiago EV (24 kWh)</option>
+            <option value="111.5">BMW iX (111.5 kWh)</option>
+            <option value="82.5">BYD Seal (82.5 kWh)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Current Battery (%)</label>
+          <input type="range" id="batt-current" min="0" max="100" value="20" oninput="updateBattery()">
+          <span id="batt-current-val">20%</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Target Charge (%)</label>
+          <input type="range" id="batt-target" min="0" max="100" value="80" oninput="updateBattery()">
+          <span id="batt-target-val">80%</span>
+        </div>
+        <div class="form-group">
+          <label>Route Distance (km)</label>
+          <input type="number" id="batt-distance" placeholder="e.g. 150" oninput="updateBattery()">
+        </div>
+      </div>
+      <div class="result-box" id="batt-result"></div>
+    </div>
+  </section>
+
+  <!-- 5. COST CALCULATOR -->
+  <section class="section" id="sec-cost">
+    <div class="section-header"><h2>💸 Cost Calculator</h2></div>
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Station</label>
+          <select id="cost-station" onchange="calcCost()"></select>
+        </div>
+        <div class="form-group">
+          <label>Units Required (kWh)</label>
+          <input type="number" id="cost-kwh" placeholder="e.g. 20" oninput="calcCost()">
+        </div>
+      </div>
+      <div class="pricing-table" id="pricing-table"></div>
+      <div class="result-box" id="cost-result"></div>
+    </div>
+    <h3 style="margin-top:28px;font-size:16px;">🏷️ Best Deal Finder</h3>
+    <div class="deal-grid" id="deal-grid"></div>
+  </section>
+
+  <!-- 6. COMPARE -->
+  <section class="section" id="sec-compare">
+    <div class="section-header"><h2>🔄 Station Comparison</h2></div>
+    <div class="compare-controls">
+      <select id="cmp-1" onchange="renderCompare()"></select> vs
+      <select id="cmp-2" onchange="renderCompare()"></select>
+    </div>
+    <div id="compare-table"></div>
+  </section>
+
+  <!-- 7. ROUTE PLANNER -->
+  <section class="section" id="sec-route">
+    <div class="section-header"><h2>🛣️ Route Planner</h2></div>
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Origin</label>
+          <input type="text" id="route-from" placeholder="e.g. Bengaluru">
+        </div>
+        <div class="form-group">
+          <label>Destination</label>
+          <input type="text" id="route-to" placeholder="e.g. Mysore">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Current Battery (%)</label>
+          <input type="number" id="route-battery" placeholder="50">
+        </div>
+        <div class="form-group">
+          <label>EV Range (km)</label>
+          <input type="number" id="route-range" placeholder="300">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="planRoute()">Plan Route</button>
+    </div>
+    <div id="route-result"></div>
+    <h3 style="margin-top:24px;font-size:16px;">🌙 Off-peak Charging Suggestions</h3>
+    <div class="offpeak-grid" id="offpeak-grid"></div>
+  </section>
+
+  <!-- 8. HISTORY -->
+  <section class="section" id="sec-history">
+    <div class="section-header"><h2>📊 Charging History</h2></div>
+    <div class="history-stats" id="history-stats"></div>
+    <table class="data-table" id="history-table">
+      <thead><tr><th>Date</th><th>Station</th><th>Duration</th><th>kWh</th><th>Cost</th><th>Rating</th></tr></thead>
+      <tbody id="history-body"></tbody>
+    </table>
+  </section>
+
+  <!-- 9. CALENDAR -->
+  <section class="section" id="sec-calendar">
+    <div class="section-header"><h2>🗓️ Booking Calendar</h2></div>
+    <div class="calendar-header">
+      <button onclick="prevMonth()">‹</button>
+      <span id="cal-title"></span>
+      <button onclick="nextMonth()">›</button>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+    <div id="booking-events"></div>
+  </section>
+
+  <!-- 10. GREEN SCORE -->
+  <section class="section" id="sec-green">
+    <div class="section-header"><h2>♻️ Green Score & CO2 Savings</h2></div>
+    <div class="green-dashboard" id="green-dashboard"></div>
+  </section>
+
+  <!-- 11. VEHICLE PROFILES -->
+  <section class="section" id="sec-profile">
+    <div class="section-header">
+      <h2>🚗 Vehicle Profiles</h2>
+      <button class="btn-sm" onclick="addVehicle()">+ Add Vehicle</button>
+    </div>
+    <div class="vehicle-grid" id="vehicle-grid"></div>
+  </section>
+
+  <!-- 12. PAYMENTS -->
+  <section class="section" id="sec-payment">
+    <div class="section-header"><h2>🛡️ Payments & QR Scan</h2></div>
+    <div class="payment-methods" id="payment-methods"></div>
+    <div style="margin-top:24px">
+      <h3 style="font-size:16px;margin-bottom:12px;">📱 QR Scan & Start</h3>
+      <div class="qr-box">
+        <div class="qr-placeholder">📷</div>
+        <p>Tap to scan station QR code and start charging instantly</p>
+        <button class="btn-primary" onclick="simulateQR()">Simulate QR Scan</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. SUPPORT -->
+  <section class="section" id="sec-support">
+    <div class="section-header"><h2>💬 Live Support Chat</h2></div>
+    <div class="chat-container" id="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg agent">👋 Hi! I'm VoltPath Support. How can I help you today?</div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">Send</button>
+      </div>
+    </div>
+    <div style="margin-top:24px">
+      <h3 style="font-size:16px;margin-bottom:12px;">📣 Report Station Issue</h3>
+      <div class="form-card">
+        <div class="form-group"><label>Station</label><select id="report-station"></select></div>
+        <div class="form-group"><label>Issue Type</label>
+          <select id="report-type">
+            <option>Broken Connector</option><option>Payment Issue</option>
+            <option>App Not Connecting</option><option>Slow Charging</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Details</label><textarea id="report-detail" rows="3" placeholder="Describe the issue..."></textarea></div>
+        <button class="btn-primary" onclick="submitReport()">Submit Report</button>
+        <div id="report-confirm" class="success-banner" style="display:none;margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. HOME CHARGER -->
+  <section class="section" id="sec-home">
+    <div class="section-header"><h2>🏠 Home Charger Guide</h2></div>
+    <div class="guide-grid" id="guide-grid"></div>
+  </section>
+
+  <!-- 15. REFERRAL -->
+  <section class="section" id="sec-referral">
+    <div class="section-header"><h2>🤝 Referral Rewards</h2></div>
+    <div class="referral-box" id="referral-box"></div>
+  </section>
+
+  <!-- 16. ALERTS -->
+  <section class="section" id="sec-alerts">
+    <div class="section-header"><h2>🔔 Slot Alerts & Notifications</h2></div>
+    <div id="alerts-list"></div>
+  </section>
+
+  <!-- RATINGS MODAL -->
+  <div class="modal-overlay" id="rating-modal" style="display:none">
+    <div class="modal">
+      <h3>⭐ Rate This Station</h3>
+      <div class="stars" id="star-input">
+        <span onclick="setRating(1)">☆</span><span onclick="setRating(2)">☆</span>
+        <span onclick="setRating(3)">☆</span><span onclick="setRating(4)">☆</span><span onclick="setRating(5)">☆</span>
+      </div>
+      <textarea id="review-text" rows="3" placeholder="Share your experience..."></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn-primary" onclick="submitRating()">Submit</button>
+        <button class="btn-outline" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

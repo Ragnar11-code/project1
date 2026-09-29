@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltPath – Register</title>
+<link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+<div class="auth-container">
+  <div class="brand">
+    <div class="logo">⚡</div>
+    <h1>VoltPath</h1>
+    <p>Create your account</p>
+  </div>
+
+  <div class="card">
+    <h2>Join VoltPath</h2>
+    <p class="subtitle">Start your smart EV charging journey</p>
+    <div id="reg-error" class="error-msg" style="display:none"></div>
+    <div id="reg-success" class="success-msg" style="display:none"></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="reg-fname" placeholder="Arjun">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="reg-lname" placeholder="Sharma">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="reg-email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="reg-phone" placeholder="+91 98765 43210">
+    </div>
+    <div class="form-group">
+      <label>EV Model</label>
+      <select id="reg-vehicle">
+        <option value="">Select your EV</option>
+        <option value="Tata Nexon EV">Tata Nexon EV</option>
+        <option value="MG ZS EV">MG ZS EV</option>
+        <option value="Hyundai Kona Electric">Hyundai Kona Electric</option>
+        <option value="Ather 450X">Ather 450X</option>
+        <option value="Ola S1 Pro">Ola S1 Pro</option>
+        <option value="Tata Tiago EV">Tata Tiago EV</option>
+        <option value="BMW iX">BMW iX</option>
+        <option value="BYD Seal">BYD Seal</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="Minimum 6 characters">
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input type="password" id="reg-confirm" placeholder="Re-enter password">
+    </div>
+    <button class="btn-primary" onclick="handleRegister()">Create Account</button>
+    <p class="switch-text">Already have an account? <a href="../index.html">Sign In</a></p>
+  </div>
+</div>
+<script src="../js/auth.js"></script>
+</body>
+</html>

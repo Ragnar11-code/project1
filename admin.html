@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltPath Admin</title>
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sidebar-brand"><span class="logo-icon">⚡</span><span class="logo-text">VoltPath Admin</span></div>
+  <ul class="nav-list">
+    <li class="nav-item active" onclick="showAdmin('overview')"><span class="nav-icon">📊</span><span>Overview</span></li>
+    <li class="nav-item" onclick="showAdmin('stations')"><span class="nav-icon">⚡</span><span>Stations & Pricing</span></li>
+    <li class="nav-item" onclick="showAdmin('bookings')"><span class="nav-icon">📅</span><span>All Bookings</span></li>
+    <li class="nav-item" onclick="showAdmin('users')"><span class="nav-icon">👥</span><span>Users</span></li>
+    <li class="nav-item" onclick="showAdmin('reports')"><span class="nav-icon">📣</span><span>Issue Reports</span></li>
+    <li class="nav-item" onclick="showAdmin('revenue')"><span class="nav-icon">💰</span><span>Revenue</span></li>
+  </ul>
+  <div class="sidebar-footer"><button class="logout-btn" onclick="adminLogout()">⬅ Logout</button></div>
+</nav>
+
+<main class="main-content">
+  <header class="topbar">
+    <div class="topbar-title" id="admin-title">Overview</div>
+    <div class="admin-badge">🛡️ Administrator</div>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section class="section active" id="asec-overview">
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="admin-two-col">
+      <div>
+        <h3 class="sec-title">Station Status Summary</h3>
+        <div id="station-summary"></div>
+      </div>
+      <div>
+        <h3 class="sec-title">Recent Activity</h3>
+        <div id="recent-activity"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATIONS & PRICING -->
+  <section class="section" id="asec-stations">
+    <div class="section-header">
+      <h2>⚡ Stations & Pricing</h2>
+    </div>
+    <div id="admin-stations-grid"></div>
+  </section>
+
+  <!-- BOOKINGS -->
+  <section class="section" id="asec-bookings">
+    <div class="section-header"><h2>📅 All Bookings</h2></div>
+    <table class="data-table" id="all-bookings-table">
+      <thead><tr><th>User</th><th>Station</th><th>Date</th><th>Time</th><th>Connector</th><th>Status</th></tr></thead>
+      <tbody id="all-bookings-body"></tbody>
+    </table>
+  </section>
+
+  <!-- USERS -->
+  <section class="section" id="asec-users">
+    <div class="section-header"><h2>👥 Registered Users</h2></div>
+    <div id="users-table-wrap"></div>
+  </section>
+
+  <!-- REPORTS -->
+  <section class="section" id="asec-reports">
+    <div class="section-header"><h2>📣 Station Issue Reports</h2></div>
+    <div id="reports-list"></div>
+  </section>
+
+  <!-- REVENUE -->
+  <section class="section" id="asec-revenue">
+    <div class="section-header"><h2>💰 Revenue by Station</h2></div>
+    <div id="revenue-content"></div>
+  </section>
+
+</main>
+
+<script src="../js/data.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
